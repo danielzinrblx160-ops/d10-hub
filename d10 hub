@@ -74,8 +74,8 @@ while true do
     pcall(function()
         remote:InvokeServer(1)
     end)
-    
-    task.wait(4) -- espera 4 segundos
+
+    task.wait(6) -- agora espera 6 segundos
 end
    end,
 })
