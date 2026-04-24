@@ -8,67 +8,65 @@ local Window = Rayfield:CreateWindow({
    Theme = "Default",
    ConfigurationSaving = {
       Enabled = true,
-      FolderName = "d10Data", 
-      FileName = "d10 Hub"
+      FolderName = "d10HubData",
+      FileName = "config"
    },
    KeySystem = false
 })
 
-local maintab = Window:CreateTab("Main", 4483362458)
+local maintab = Window:CreateTab("MainTab", 4483362458)
 
--- Notificação inicial
-Rayfield:Notify({
-   Title = "d10 Hub Ativado",
-   Content = "Bem-vindo, d10!",
-   Duration = 6.5,
-   Image = 4483362458,
-})
+-- Variáveis de controle para os loops
+local tokenRunning = false
+local yenRunning = false
 
--- Variáveis de controle do Loop
-local running = false
-local thread = nil
+-- Referência do Remote (centralizada para evitar repetição)
+local remotePath = game:GetService("ReplicatedStorage")
+    :WaitForChild("Packages")
+    :WaitForChild("_Index")
+    :WaitForChild("sleitnick_knit@1.7.0")
+    :WaitForChild("knit")
+    :WaitForChild("Services")
+    :WaitForChild("SeasonService")
+    :WaitForChild("RF")
+    :WaitForChild("RequestRankedReward")
 
--- Referência do Remote (Protegida com pcall caso o caminho mude)
-local success, remote = pcall(function()
-    return game:GetService("ReplicatedStorage")
-        :WaitForChild("Packages")
-        :WaitForChild("_Index")
-        :WaitForChild("sleitnick_knit@1.7.0")
-        :WaitForChild("knit")
-        :WaitForChild("Services")
-        :WaitForChild("SeasonService")
-        :WaitForChild("RF")
-        :WaitForChild("RequestRankedReward")
-end)
-
--- Toggle corrigido
+-- Toggle para Token (Argumento 1)
 local tokenToggle = maintab:CreateToggle({
    Name = "Auto Token",
    CurrentValue = false,
-   Flag = "TokenFlag", 
+   Flag = "TokenFlag",
    Callback = function(Value)
-      running = Value
+      tokenRunning = Value
+      if tokenRunning then
+         task.spawn(function()
+            while tokenRunning do
+               pcall(function()
+                  remotePath:InvokeServer(1)
+               end)
+               task.wait(1) -- Intervalo de 1 segundo
+            end
+         end)
+      end
+   end,
+})
 
-      if running then
-         -- Inicia o loop em uma thread separada
-         if not thread then
-            thread = task.spawn(function()
-               while running do
-                  if success and remote then
-                     pcall(function()
-                        remote:InvokeServer(1)
-                     end)
-                  else
-                     warn("Remote não encontrado!")
-                  end
-                  task.wait(5) -- Espera 5 segundos entre as requisições
-               end
-               thread = nil
-            end)
-         end
-      else
-         running = false
-         thread = nil
+-- Toggle para Yen (Argumento 2)
+local yenToggle = maintab:CreateToggle({
+   Name = "Auto Yen",
+   CurrentValue = false,
+   Flag = "YenFlag",
+   Callback = function(Value)
+      yenRunning = Value
+      if yenRunning then
+         task.spawn(function()
+            while yenRunning do
+               pcall(function()
+                  remotePath:InvokeServer(2)
+               end)
+               task.wait(1) -- Intervalo de 1 segundo
+            end
+         end)
       end
    end,
 })
