@@ -2,80 +2,73 @@ local Rayfield = loadstring(game:HttpGet('https://sirius.menu/rayfield'))()
 
 local Window = Rayfield:CreateWindow({
    Name = "d10 Hub",
-   Icon = 0, -- Icon in Topbar. Can use Lucide Icons (string) or Roblox Image (number). 0 to use no icon (default).
+   Icon = 0,
    LoadingTitle = "Carregando...",
    LoadingSubtitle = "by d10",
-   ShowText = "d10 Hub", -- for mobile users to unhide Rayfield, change if you'd like
-   Theme = "Default", -- Check https://docs.sirius.menu/rayfield/configuration/themes
-
-   ToggleUIKeybind = "K", -- The keybind to toggle the UI visibility (string like "K" or Enum.KeyCode)
-
-   DisableRayfieldPrompts = false,
-   DisableBuildWarnings = false, -- Prevents Rayfield from emitting warnings when the script has a version mismatch with the interface.
-
-   -- ScriptID = "sid_xxxxxxxxxxxx", -- Your Script ID from developer.sirius.menu — enables analytics, managed keys, and script hosting
-
+   Theme = "Default",
    ConfigurationSaving = {
       Enabled = true,
-      FolderName = nil, -- Create a custom folder for your hub/game
+      FolderName = "d10Data", 
       FileName = "d10 Hub"
    },
-
-   Discord = {
-      Enabled = false, -- Prompt the user to join your Discord server if their executor supports it
-      Invite = "noinvitelink", -- The Discord invite code, do not include Discord.gg/. E.g. Discord.gg/ABCD would be ABCD
-      RememberJoins = true -- Set this to false to make them join the Discord every time they load it up
-   },
-
-   KeySystem = false, -- Set this to true to use our key system
-   KeySettings = {
-      Title = "Untitled",
-      Subtitle = "Key System",
-      Note = "No method of obtaining the key is provided", -- Use this to tell the user how to get a key
-      FileName = "Key", -- It is recommended to use something unique, as other scripts using Rayfield may overwrite your key file
-      SaveKey = true, -- The user's key will be saved, but if you change the key, they will be unable to use your script
-      GrabKeyFromSite = false, -- If this is true, set Key below to the RAW site you would like Rayfield to get the key from
-      Key = {"Key"} -- List of keys that the system will accept, can be RAW file links (pastebin, github, etc.) or simple strings ("hello", "key22")
-   }
+   KeySystem = false
 })
 
-local maintab = Window:CreateTab("MainTab", 4483362458) -- Title, Image
+local maintab = Window:CreateTab("Main", 4483362458)
 
+-- Notificação inicial
 Rayfield:Notify({
-   Title = "d10 Hub activate",
-   Content = "by d10",
+   Title = "d10 Hub Ativado",
+   Content = "Bem-vindo, d10!",
    Duration = 6.5,
    Image = 4483362458,
 })
 
-local d10hubbutton = maintab:CreateButton({
-   Name = "d10",
-   Callback = function()
-   print("d10")
-   end,
-})
+-- Variáveis de controle do Loop
+local running = false
+local thread = nil
 
+-- Referência do Remote (Protegida com pcall caso o caminho mude)
+local success, remote = pcall(function()
+    return game:GetService("ReplicatedStorage")
+        :WaitForChild("Packages")
+        :WaitForChild("_Index")
+        :WaitForChild("sleitnick_knit@1.7.0")
+        :WaitForChild("knit")
+        :WaitForChild("Services")
+        :WaitForChild("SeasonService")
+        :WaitForChild("RF")
+        :WaitForChild("RequestRankedReward")
+end)
+
+-- Toggle corrigido
 local tokenToggle = maintab:CreateToggle({
-   Name = "Token",
+   Name = "Auto Token",
    CurrentValue = false,
-   Flag = "Token", -- A flag is the identifier for the configuration file; make sure every element has a different flag if you're using configuration saving to ensure no overlaps
+   Flag = "TokenFlag", 
    Callback = function(Value)
-   local remote = game:GetService("ReplicatedStorage")
-    :WaitForChild("Packages")
-    :WaitForChild("_Index")
-    :WaitForChild("sleitnick_knit@1.7.0")
-    :WaitForChild("knit")
-    :WaitForChild("Services")
-    :WaitForChild("SeasonService")
-    :WaitForChild("RF")
-    :WaitForChild("RequestRankedReward")
+      running = Value
 
-while true do
-    pcall(function()
-        remote:InvokeServer(1)
-    end)
-    
-    task.wait(4) -- espera 4 segundos
-end
+      if running then
+         -- Inicia o loop em uma thread separada
+         if not thread then
+            thread = task.spawn(function()
+               while running do
+                  if success and remote then
+                     pcall(function()
+                        remote:InvokeServer(1)
+                     end)
+                  else
+                     warn("Remote não encontrado!")
+                  end
+                  task.wait(5) -- Espera 5 segundos entre as requisições
+               end
+               thread = nil
+            end)
+         end
+      else
+         running = false
+         thread = nil
+      end
    end,
 })
