@@ -62,6 +62,19 @@ local tokenToggle = maintab:CreateToggle({
    Callback = function(Value)
    local running = false
 
+local running = false
+local thread = nil
+
+local remote = game:GetService("ReplicatedStorage")
+    :WaitForChild("Packages")
+    :WaitForChild("_Index")
+    :WaitForChild("sleitnick_knit@1.7.0")
+    :WaitForChild("knit")
+    :WaitForChild("Services")
+    :WaitForChild("SeasonService")
+    :WaitForChild("RF")
+    :WaitForChild("RequestRankedReward")
+
 local Token = Tab:CreateToggle({
    Name = "Token",
    CurrentValue = false,
@@ -69,28 +82,18 @@ local Token = Tab:CreateToggle({
    Callback = function(Value)
       running = Value
 
-      if running then
-         task.spawn(function()
-            local remote = game:GetService("ReplicatedStorage")
-               :WaitForChild("Packages")
-               :WaitForChild("_Index")
-               :WaitForChild("sleitnick_knit@1.7.0")
-               :WaitForChild("knit")
-               :WaitForChild("Services")
-               :WaitForChild("SeasonService")
-               :WaitForChild("RF")
-               :WaitForChild("RequestRankedReward")
-
+      if running and not thread then
+         thread = task.spawn(function()
             while running do
                pcall(function()
                   remote:InvokeServer(1)
                end)
 
-               task.wait(4.8)
+               task.wait(5)
             end
+
+            thread = nil -- libera pra poder iniciar de novo depois
          end)
       end
-   end,
-})
    end,
 })
