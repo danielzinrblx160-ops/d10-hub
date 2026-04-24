@@ -48,34 +48,38 @@ Rayfield:Notify({
    Image = 4483362458,
 })
 
-local d10hubbutton = maintab:CreateButton({
+local d10hub = maintab:CreateButton({
    Name = "d10",
    Callback = function()
    print("d10")
    end,
 })
 
-   local tokenToggle = maintab:CreateToggle({
+local tokenToggle = maintab:CreateToggle({
    Name = "Token",
    CurrentValue = false,
    Flag = "Token", -- A flag is the identifier for the configuration file; make sure every element has a different flag if you're using configuration saving to ensure no overlaps
    Callback = function(Value)
- local remote = game:GetService("ReplicatedStorage")
-    :WaitForChild("Packages")
-    :WaitForChild("_Index")
-    :WaitForChild("sleitnick_knit@1.7.0")
-    :WaitForChild("knit")
-    :WaitForChild("Services")
-    :WaitForChild("SeasonService")
-    :WaitForChild("RF")
-    :WaitForChild("RequestRankedReward")
+   local tokenRunning = false
 
-while true do
-    pcall(function()
-        remote:InvokeServer(1)
-    end)
+local tokenToggle = maintab:CreateToggle({
+   Name = "Token",
+   CurrentValue = false,
+   Flag = "Token",
+   Callback = function(Value)
+      tokenRunning = Value
 
-    task.wait(5) -- agora espera 5 segundos
-end})
+      if tokenRunning then
+         task.spawn(function()
+            local remote = game:GetService("ReplicatedStorage"):WaitForChild("Packages"):WaitForChild("_Index"):WaitForChild("sleitnick_knit@1.7.0"):WaitForChild("knit"):WaitForChild("Services"):WaitForChild("SeasonService"):WaitForChild("RF"):WaitForChild("RequestRankedReward")
+
+            while tokenRunning do
+               pcall(function()
+                  remote:InvokeServer(1)
+               end)
+               task.wait(1) -- intervalo (ajuste se quiser)
+            end
+         end)
+      end
    end,
 })
