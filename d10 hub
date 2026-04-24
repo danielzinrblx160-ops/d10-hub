@@ -39,7 +39,7 @@ local Window = Rayfield:CreateWindow({
    }
 })
 
-local Maintab = Window:CreateTab("MainTab", 4483362458) -- Title, Image
+local maintab = Window:CreateTab("MainTab", 4483362458) -- Title, Image
 
 Rayfield:Notify({
    Title = "d10 Hub activate",
@@ -55,7 +55,7 @@ local d10hub = maintab:CreateButton({
    end,
 })
 
-local tokenToggle = Tab:CreateToggle({
+local tokenToggle = maintab:CreateToggle({
    Name = "Token",
    CurrentValue = false,
    Flag = "Token", -- A flag is the identifier for the configuration file; make sure every element has a different flag if you're using configuration saving to ensure no overlaps
