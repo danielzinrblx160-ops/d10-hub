@@ -1,77 +1,81 @@
--- Criar GUI
-local ScreenGui = Instance.new("ScreenGui")
-ScreenGui.Parent = game:GetService("CoreGui")
+local Rayfield = loadstring(game:HttpGet('https://sirius.menu/rayfield'))()
 
-local Frame = Instance.new("Frame")
-Frame.Parent = ScreenGui
-Frame.Size = UDim2.new(0, 250, 0, 150)
-Frame.Position = UDim2.new(0.5, -125, 0.5, -75)
-Frame.BackgroundColor3 = Color3.fromRGB(25, 25, 25)
-Frame.Active = true
-Frame.Draggable = true
+local Window = Rayfield:CreateWindow({
+   Name = "d10 Hub",
+   Icon = 0, -- Icon in Topbar. Can use Lucide Icons (string) or Roblox Image (number). 0 to use no icon (default).
+   LoadingTitle = "Carregando...",
+   LoadingSubtitle = "by d10",
+   ShowText = "d10 Hub", -- for mobile users to unhide Rayfield, change if you'd like
+   Theme = "Default", -- Check https://docs.sirius.menu/rayfield/configuration/themes
 
--- Bordas arredondadas
-local UICorner = Instance.new("UICorner", Frame)
-UICorner.CornerRadius = UDim.new(0, 12)
+   ToggleUIKeybind = "Enum.KeyCode", -- The keybind to toggle the UI visibility (string like "K" or Enum.KeyCode)
 
--- Borda verde (UIStroke)
-local UIStroke = Instance.new("UIStroke", Frame)
-UIStroke.Color = Color3.fromRGB(0, 255, 0)
-UIStroke.Thickness = 2
+   DisableRayfieldPrompts = false,
+   DisableBuildWarnings = false, -- Prevents Rayfield from emitting warnings when the script has a version mismatch with the interface.
 
--- Simular borda tracejada (não existe nativo no Roblox)
-UIStroke.Transparency = 0.2
+   -- ScriptID = "sid_xxxxxxxxxxxx", -- Your Script ID from developer.sirius.menu — enables analytics, managed keys, and script hosting
 
--- Título
-local Title = Instance.new("TextLabel")
-Title.Parent = Frame
-Title.Size = UDim2.new(1, 0, 0, 40)
-Title.BackgroundTransparency = 1
-Title.Text = "d10 Hub"
-Title.TextColor3 = Color3.fromRGB(255, 255, 255)
-Title.TextScaled = true
-Title.Font = Enum.Font.GothamBold
+   ConfigurationSaving = {
+      Enabled = true,
+      FolderName = nil, -- Create a custom folder for your hub/game
+      FileName = "d10 Hub"
+   },
 
--- Botão
-local ToggleButton = Instance.new("TextButton")
-ToggleButton.Parent = Frame
-ToggleButton.Size = UDim2.new(0.8, 0, 0, 50)
-ToggleButton.Position = UDim2.new(0.1, 0, 0.5, -10)
-ToggleButton.Text = "OFF"
-ToggleButton.TextScaled = true
-ToggleButton.Font = Enum.Font.GothamBold
-ToggleButton.BackgroundColor3 = Color3.fromRGB(255, 0, 0)
-ToggleButton.TextColor3 = Color3.fromRGB(255,255,255)
+   Discord = {
+      Enabled = false, -- Prompt the user to join your Discord server if their executor supports it
+      Invite = "noinvitelink", -- The Discord invite code, do not include Discord.gg/. E.g. Discord.gg/ABCD would be ABCD
+      RememberJoins = true -- Set this to false to make them join the Discord every time they load it up
+   },
 
-local ButtonCorner = Instance.new("UICorner", ToggleButton)
-ButtonCorner.CornerRadius = UDim.new(0, 10)
+   KeySystem = false, -- Set this to true to use our key system
+   KeySettings = {
+      Title = "Untitled",
+      Subtitle = "Key System",
+      Note = "No method of obtaining the key is provided", -- Use this to tell the user how to get a key
+      FileName = "Key", -- It is recommended to use something unique, as other scripts using Rayfield may overwrite your key file
+      SaveKey = true, -- The user's key will be saved, but if you change the key, they will be unable to use your script
+      GrabKeyFromSite = false, -- If this is true, set Key below to the RAW site you would like Rayfield to get the key from
+      Key = {"Hello"} -- List of keys that the system will accept, can be RAW file links (pastebin, github, etc.) or simple strings ("hello", "key22")
+   }
+})
 
--- Estado
-local isOn = false
+local Maintab = Window:CreateTab("MainTab", 4483362458) -- Title, Image
 
--- Função do botão
-ToggleButton.MouseButton1Click:Connect(function()
-	isOn = not isOn
-	
-	if isOn then
-		ToggleButton.Text = "ON"
-		ToggleButton.BackgroundColor3 = Color3.fromRGB(0, 255, 0)
-		
-		-- Executar script
-		local args = {2}
-		game:GetService("ReplicatedStorage")
-			:WaitForChild("Packages")
-			:WaitForChild("_Index")
-			:WaitForChild("sleitnick_knit@1.7.0")
-			:WaitForChild("knit")
-			:WaitForChild("Services")
-			:WaitForChild("SeasonService")
-			:WaitForChild("RF")
-			:WaitForChild("RequestRankedReward")
-			:InvokeServer(unpack(args))
-		
-	else
-		ToggleButton.Text = "OFF"
-		ToggleButton.BackgroundColor3 = Color3.fromRGB(255, 0, 0)
-	end
-end)
+Rayfield:Notify({
+   Title = "d10 Hub activate",
+   Content = "by d10",
+   Duration = 6.5,
+   Image = 4483362458,
+})
+
+local running = false
+
+local Token = Tab:CreateToggle({
+   Name = "Token",
+   CurrentValue = false,
+   Flag = "Token",
+   Callback = function(Value)
+      running = Value
+
+      if running then
+         task.spawn(function()
+            local remote = game:GetService("ReplicatedStorage")
+               :WaitForChild("Packages")
+               :WaitForChild("_Index")
+               :WaitForChild("sleitnick_knit@1.7.0")
+               :WaitForChild("knit")
+               :WaitForChild("Services")
+               :WaitForChild("SeasonService")
+               :WaitForChild("RF")
+               :WaitForChild("RequestRankedReward")
+
+            while running do
+               pcall(function()
+                  remote:InvokeServer(1)
+               end)
+               task.wait(1) -- ajuste o tempo se quiser (evita spam extremo)
+            end
+         end)
+      end
+   end,
+})
