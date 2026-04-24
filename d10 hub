@@ -55,17 +55,12 @@ local d10hubbutton = maintab:CreateButton({
    end,
 })
 
-local tokenToggle = maintab:CreateToggle({
+   local tokenToggle = maintab:CreateToggle({
    Name = "Token",
    CurrentValue = false,
    Flag = "Token", -- A flag is the identifier for the configuration file; make sure every element has a different flag if you're using configuration saving to ensure no overlaps
    Callback = function(Value)
-   local running = false
-
-local running = false
-local thread = nil
-
-local remote = game:GetService("ReplicatedStorage")
+ local remote = game:GetService("ReplicatedStorage")
     :WaitForChild("Packages")
     :WaitForChild("_Index")
     :WaitForChild("sleitnick_knit@1.7.0")
@@ -75,25 +70,12 @@ local remote = game:GetService("ReplicatedStorage")
     :WaitForChild("RF")
     :WaitForChild("RequestRankedReward")
 
-local Token = Tab:CreateToggle({
-   Name = "Token",
-   CurrentValue = false,
-   Flag = "Token",
-   Callback = function(Value)
-      running = Value
+while true do
+    pcall(function()
+        remote:InvokeServer(1)
+    end)
 
-      if running and not thread then
-         thread = task.spawn(function()
-            while running do
-               pcall(function()
-                  remote:InvokeServer(1)
-               end)
-
-               task.wait(5)
-            end
-
-            thread = nil -- libera pra poder iniciar de novo depois
-         end)
-      end
+    task.wait(5) -- agora espera 5 segundos
+end})
    end,
 })
