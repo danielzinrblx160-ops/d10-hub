@@ -48,7 +48,7 @@ Rayfield:Notify({
    Image = 4483362458,
 })
 
-local d10hub = maintab:CreateButton({
+local d10hubbutton = maintab:CreateButton({
    Name = "d10",
    Callback = function()
    print("d10")
@@ -60,7 +60,7 @@ local tokenToggle = maintab:CreateToggle({
    CurrentValue = false,
    Flag = "Token", -- A flag is the identifier for the configuration file; make sure every element has a different flag if you're using configuration saving to ensure no overlaps
    Callback = function(Value)
-local remote = game:GetService("ReplicatedStorage"):WaitForChild("Packages"):WaitForChild("_Index"):WaitForChild("sleitnick_knit@1.7.0"):WaitForChild("knit"):WaitForChild("Services"):WaitForChild("SeasonService"):WaitForChild("RF"):WaitForChild("RequestRankedReward")
+   local remote =      game:GetService("ReplicatedStorage"):WaitForChild("Packages"):WaitForChild("_Index"):WaitForChild("sleitnick_knit@1.7.0"):WaitForChild("knit"):WaitForChild("Services"):WaitForChild("SeasonService"):WaitForChild("RF"):WaitForChild("RequestRankedReward")
 
 pcall(function() remote:InvokeServer(1) end)
    end,
