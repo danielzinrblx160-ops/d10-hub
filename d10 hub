@@ -1,72 +1,92 @@
-local Rayfield = loadstring(game:HttpGet('https://sirius.menu/rayfield'))()
+--[[ 
+    Script Ofuscado para d10 Hub 
+    Nota: Mantenha uma cópia do original, pois este código não é editável.
+--]]
+
+local _0x53616665 = "loadstring"
+local _0x4661726d = {
+    [1] = "https://sirius.menu/rayfield",
+    [2] = "ReplicatedStorage",
+    [3] = "Packages",
+    [4] = "_Index",
+    [5] = "sleitnick_knit@1.7.0",
+    [6] = "knit",
+    [7] = "Services",
+    [8] = "SeasonService",
+    [9] = "RF",
+    [10] = "RequestRankedReward"
+}
+
+local function _0xDecrypt(_0xInput)
+    local _0xRes = ""
+    for _0xI = 1, #_0xInput do
+        _0xRes = _0xRes .. string.char(string.byte(_0xInput, _0xI))
+    end
+    return _0xRes
+end
+
+local Rayfield = loadstring(game:HttpGet(_0x4661726d[1]))()
 
 local Window = Rayfield:CreateWindow({
-   Name = "d10 Hub",
+   Name = "d10 Hub | SAFE FARM",
    Icon = 0,
-   LoadingTitle = "Carregando...",
+   LoadingTitle = "\73\110\105\99\105\97\110\100\111\32\80\114\111\116\111\99\111\108\111\115\46\46\46",
    LoadingSubtitle = "by d10",
    Theme = "Default",
-   ConfigurationSaving = {
-      Enabled = true,
-      FolderName = "d10HubData",
-      FileName = "config"
-   },
+   ConfigurationSaving = {Enabled = true, FolderName = "d10HubData", FileName = "config"},
    KeySystem = false
 })
 
-local maintab = Window:CreateTab("MainTab", 4483362458)
+local maintab = Window:CreateTab("Farm", 4483362458)
+local _0xT = false
+local _0xY = false
 
--- Variáveis de controle para os loops
-local tokenRunning = false
-local yenRunning = false
+local _0xR = game:GetService(_0x4661726d[2])
+    :WaitForChild(_0x4661726d[3])
+    :WaitForChild(_0x4661726d[4])
+    :WaitForChild(_0x4661726d[5])
+    :WaitForChild(_0x4661726d[6])
+    :WaitForChild(_0x4661726d[7])
+    :WaitForChild(_0x4661726d[8])
+    :WaitForChild(_0x4661726d[9])
+    :WaitForChild(_0x4661726d[10])
 
--- Referência do Remote (centralizada para evitar repetição)
-local remotePath = game:GetService("ReplicatedStorage")
-    :WaitForChild("Packages")
-    :WaitForChild("_Index")
-    :WaitForChild("sleitnick_knit@1.7.0")
-    :WaitForChild("knit")
-    :WaitForChild("Services")
-    :WaitForChild("SeasonService")
-    :WaitForChild("RF")
-    :WaitForChild("RequestRankedReward")
-
--- Toggle para Token (Argumento 1)
-local tokenToggle = maintab:CreateToggle({
-   Name = "Auto Token",
+maintab:CreateToggle({
+   Name = "Auto Token (3s - 4s)",
    CurrentValue = false,
    Flag = "TokenFlag",
-   Callback = function(Value)
-      tokenRunning = Value
-      if tokenRunning then
+   Callback = function(V)
+      _0xT = V
+      if _0xT then
          task.spawn(function()
-            while tokenRunning do
-               pcall(function()
-                  remotePath:InvokeServer(1)
-               end)
-               task.wait(1) -- Intervalo de 1 segundo
+            while _0xT do
+               pcall(function() _0xR:InvokeServer(1) end)
+               task.wait(math.random(30, 40) / 10) 
             end
          end)
       end
    end,
 })
 
--- Toggle para Yen (Argumento 2)
-local yenToggle = maintab:CreateToggle({
-   Name = "Auto Yen",
+maintab:CreateToggle({
+   Name = "Auto Yen (3s - 4s)",
    CurrentValue = false,
    Flag = "YenFlag",
-   Callback = function(Value)
-      yenRunning = Value
-      if yenRunning then
+   Callback = function(V)
+      _0xY = V
+      if _0xY then
          task.spawn(function()
-            while yenRunning do
-               pcall(function()
-                  remotePath:InvokeServer(2)
-               end)
-               task.wait(1) -- Intervalo de 1 segundo
+            while _0xY do
+               pcall(function() _0xR:InvokeServer(2) end)
+               task.wait(math.random(30, 40) / 10)
             end
          end)
       end
    end,
+})
+
+Rayfield:Notify({
+   Title = "Anti-Ban Ativo",
+   Content = "Intervalo aleatório configurado: 3s a 4s",
+   Duration = 5
 })
